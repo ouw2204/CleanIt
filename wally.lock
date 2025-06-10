@@ -4,5 +4,5 @@ registry = "test"
 
 [[package]]
 name = "prophetouw/cleanit"
-version = "1.3.10"
+version = "1.3.14"
 dependencies = []
