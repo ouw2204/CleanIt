@@ -8,6 +8,7 @@ export type CleanerType = {
     Destroy: (self: CleanerType) -> ();
     Remove: (self: CleanerType, Entity: any) -> ();
     Clean: (self: CleanerType) -> ();
+    Connect: (self: CleanerType, Connection: RBXScriptSignal, func: () -> ()) -> ();
 }
 
 
