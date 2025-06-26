@@ -1,10 +1,11 @@
 --!strict
-local tins,tr,tc = table.insert,table.remove,table.clear
+local tins,tr,tc,tof = table.insert,table.remove,table.clear,typeof
 local tcancel = task.cancel
+local tabletxt,destroytxt,Instancetxt,Threadtxt,RbxlScriptConnectionTxt,FunctionTxt,DeleteFunctionToCallTxt = "table","Destroy","Instance","thread","RBXScriptConnection","function","DeleteFunctionToCall"
 
 export type CleanerType = {
     Holder: {};
-    Add: (Entity: any) -> ();
+    Add: (Entity: any,CleanFunctionName: string) -> ();
     Destroy: (self: CleanerType) -> ();
     Remove: (self: CleanerType, Entity: any) -> ();
     Clean: (self: CleanerType) -> ();
@@ -15,9 +16,9 @@ export type CleanerType = {
 local mt = {}
 mt.__index = mt;
 local module = {
-    Delay = function(Entity: any, time: number)
+    Delay = function(Entity: any, time: number, customCleanFunction: string?)
         if Entity == nil then return end;
-        task.delay(time,CleanEntity,Entity,typeof(Entity))
+        task.delay(time,CleanEntity,Entity,tof(Entity),customCleanFunction)
     end,
     New = function() : CleanerType
         local Cleaner = {
@@ -34,7 +35,7 @@ end
 function mt:DestroyAfter(time: number)
     if time == nil then return end;
     task.delay(time,function()
-        if self["Destroy"] ~= nil then
+        if self[destroytxt] ~= nil then
             self:Destroy();
         end
     end)
@@ -44,9 +45,13 @@ function  mt:Extend()
     self:Add(Extended)
     return Extended
 end
-function mt:Add(Entity: any)
+function mt:Add(Entity: any,CleanFunctionName: string)
     if Entity == nil then return end;
-    tins(self,Entity)
+    if CleanFunctionName ~= nil then
+        tins(self,{Entity = Entity,DeleteFunctionToCall = CleanFunctionName})
+    else
+        tins(self,Entity)
+    end;
     return Entity;
 end;
 function mt:Remove(Entity)
@@ -58,17 +63,25 @@ function mt:Remove(Entity)
    end
    
 end
-function CleanEntity(Entity: any,type: string)
+
+function CleanEntity(Entity: any,type: string,customCleanFunction: string?)
     if Entity == nil then return end;
-    if (type == "table" and Entity["Destroy"] ~= nil) or type == "Instance" then
+    if customCleanFunction ~= nil and Entity[customCleanFunction] ~= nil then
+        Entity[customCleanFunction](Entity)
+        return
+    elseif (type == tabletxt and Entity[destroytxt] ~= nil) or type == Instancetxt then
         Entity:Destroy();
-    elseif type == "function" then
+    elseif type == tabletxt and Entity[DeleteFunctionToCallTxt] ~= nil then
+        Entity.Entity[Entity[DeleteFunctionToCallTxt] ](Entity.Entity)
+        Entity.Entity = nil;
+        Entity.DeleteFunctionToCallTxt = nil;
+    elseif type == FunctionTxt then
         Entity()
-    elseif type == "RBXScriptConnection" then
+    elseif type == RbxlScriptConnectionTxt then
         Entity:Disconnect();
-    elseif type == "thread" then
+    elseif type == Threadtxt then
         tcancel(Entity);
-    elseif type == "table" then
+    elseif type == tabletxt then
         tc(Entity)
     end
 end
@@ -78,7 +91,7 @@ function mt:Clean()
     while i >0 do
         local v: any = self[i];
         if v == nil then continue end;
-        local type = typeof(v)
+        local type = tof(v)
         CleanEntity(v,type);
         self[i] = nil;
         i = #self;
