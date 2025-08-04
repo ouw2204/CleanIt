@@ -13,19 +13,19 @@ A LUAU memory cleaner, it's a simple package that helps you clean memory. As of 
 https://create.roblox.com/store/asset/87184763787563/CleanIt
 ### Wally
 ```
-CleanIt = "prophetouw/cleanit@1.3.19"
+CleanIt = "prophetouw/cleanit@2.0.2"
 ```
 ### Github
 To download this from the github, see the [releases](https://github.com/ProphetOuw/CleanIt/releases/tag/first) section and download the latest rbxm file.
 ## Methods
 ### Timed cleaning
 ```lua
-CleanIt.Delay(Entity,.2,customCleanFunction: string?)
+CleanIt.delay(Entity,.2,customCleanFunction: string?)
 ```
 ### Add
 Adds the Entity to the cleaning list.
 ```lua
-local Cleaner = CleanIt.New()
+local Cleaner = CleanIt.new()
 Cleaner:Add(object1)
 Cleaner:Destroy()
 ```

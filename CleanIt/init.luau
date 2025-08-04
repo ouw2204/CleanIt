@@ -1,7 +1,7 @@
 --!strict
-local tins,tr,tc,tof = table.insert,table.remove,table.clear,typeof
+local tins,tr,tc,tof,tf = table.insert,table.remove,table.clear,typeof,table.find
 local tcancel = task.cancel
-local tabletxt,destroytxt,Instancetxt,Threadtxt,RbxlScriptConnectionTxt,FunctionTxt,DeleteFunctionToCallTxt = "table","Destroy","Instance","thread","RBXScriptConnection","function","DeleteFunctionToCall"
+local tabletxt,destroytxt,Instancetxt,Threadtxt,RbxlScriptConnectionTxt,FunctionTxt,DeleteFunctionToCallTxt,CleanTxt = "table","Destroy","Instance","thread","RBXScriptConnection","function","DeleteFunctionToCall", "Clean"
 
 export type CleanerType = {
     Holder: {};
@@ -11,16 +11,19 @@ export type CleanerType = {
     Clean: (self: CleanerType) -> ();
     Extend: (self: CleanerType) -> CleanerType;
     DestroyAfter: (self: CleanerType, time: number) -> ();
+    CleanAfter: (self: CleanerType, time: number) -> ();
+    Exists: (self: CleanerType, Entity: any) -> boolean,
+    Connect: (self: CleanerType, connection: RBXScriptSignal, func: (...any) -> any) -> ();
 }
 
 local mt = {}
 mt.__index = mt;
 local module = {
-    Delay = function(Entity: any, time: number, customCleanFunction: string?)
+    delay = function(Entity: any, time: number, customCleanFunction: string?)
         if Entity == nil then return end;
         task.delay(time,CleanEntity,Entity,tof(Entity),customCleanFunction)
     end,
-    New = function() : CleanerType
+    new = function() : CleanerType
         local Cleaner = {
         } :: CleanerType;
         setmetatable(Cleaner,mt);
@@ -32,6 +35,14 @@ function mt:Connect(Connection: RBXScriptSignal, func: () -> ())
         tins(self,Connection:Connect(func))
     end
 end
+function mt:CleanAfter(time: number)
+    if time == nil then return end;
+    task.delay(time,function()
+        if self[CleanTxt] ~= nil then
+            self:Clean();
+        end
+    end)
+end
 function mt:DestroyAfter(time: number)
     if time == nil then return end;
     task.delay(time,function()
@@ -41,7 +52,7 @@ function mt:DestroyAfter(time: number)
     end)
 end
 function  mt:Extend()
-    local Extended = module.New();
+    local Extended = module.new();
     self:Add(Extended)
     return Extended
 end
@@ -56,7 +67,7 @@ function mt:Add(Entity: any,CleanFunctionName: string)
 end;
 function mt:Remove(Entity)
     if Entity == nil then return end;
-   local find = table.find(self,Entity)
+   local find = tf(self,Entity)
    if find ~= nil then
     tr(self,find)
     return true;
@@ -85,17 +96,16 @@ function CleanEntity(Entity: any,type: string,customCleanFunction: string?)
         tc(Entity)
     end
 end
-
+function mt:Exists(Entity)
+    if Entity == nil then return false end;
+    return tf(self,Entity) ~= nil
+end
 function mt:Clean()
-    local i = #self
-    while i >0 do
-        local v: any = self[i];
-        if v == nil then continue end;
+    for _,v in pairs(self) do
         local type = tof(v)
         CleanEntity(v,type);
-        self[i] = nil;
-        i = #self;
     end
+    tc(self)
 end
 function mt:Destroy()
     self:Clean();
