@@ -14,17 +14,19 @@ export type CleanerType = {
     CleanAfter: (self: CleanerType, time: number) -> ();
     Exists: (self: CleanerType, Entity: any) -> boolean,
     Connect: (self: CleanerType, connection: RBXScriptSignal, func: (...any) -> any) -> ();
+    CleanIndividual: (self: CleanerType, Entity: any,CustomCleanFunction: string?) -> ();
 }
 
 local mt = {}
 mt.__index = mt;
 local module = {
-    delay = function(Entity: any, time: number, customCleanFunction: string?)
+    delay = function(Entity: any, Time: number, customCleanFunction: string?)
         if Entity == nil then return end;
-        task.delay(time,CleanEntity,Entity,tof(Entity),customCleanFunction)
+        task.delay(Time,CleanEntity,Entity,tof(Entity),customCleanFunction)
     end,
     new = function() : CleanerType
         local Cleaner = {
+            Holder = {};
         } :: CleanerType;
         setmetatable(Cleaner,mt);
         return Cleaner :: any
@@ -75,19 +77,30 @@ function mt:Remove(Entity)
    
 end
 
+local animationtracktxt = "AnimationTrack"
+local TweenTxt = "Tween";
 function CleanEntity(Entity: any,type: string,customCleanFunction: string?)
     if Entity == nil then return end;
     if customCleanFunction ~= nil and Entity[customCleanFunction] ~= nil then
         Entity[customCleanFunction](Entity)
         return
     elseif (type == tabletxt and Entity[destroytxt] ~= nil) or type == Instancetxt then
+
+        --|
+        if Entity.ClassName == animationtracktxt then
+            Entity:Stop();
+        elseif Entity.ClassName == TweenTxt then
+            Entity:Cancel();
+        end
+        --|>
+
         Entity:Destroy();
     elseif type == tabletxt and Entity[DeleteFunctionToCallTxt] ~= nil then
         Entity.Entity[Entity[DeleteFunctionToCallTxt] ](Entity.Entity)
         Entity.Entity = nil;
         Entity.DeleteFunctionToCallTxt = nil;
     elseif type == FunctionTxt then
-        Entity()
+        task.spawn(Entity)
     elseif type == RbxlScriptConnectionTxt then
         Entity:Disconnect();
     elseif type == Threadtxt then
@@ -96,9 +109,25 @@ function CleanEntity(Entity: any,type: string,customCleanFunction: string?)
         tc(Entity)
     end
 end
+function mt:CleanIndividual(Entity: any,CustomCleanFunction: string?)
+    if self[Entity] ~= nil then
+        CleanEntity(self[Entity],tof(self[Entity]),CustomCleanFunction)
+        self[Entity] = nil;
+    else
+        CleanEntity(Entity,tof(Entity),CustomCleanFunction)
+        local f = tf(self,Entity)
+        if f ~= nil then
+            tr(Entity,f)
+        end
+    end
+end
 function mt:Exists(Entity)
     if Entity == nil then return false end;
     return tf(self,Entity) ~= nil
+end
+
+function mt:GetAll()
+    return self;
 end
 function mt:Clean()
     for _,v in pairs(self) do
@@ -107,6 +136,10 @@ function mt:Clean()
     end
     tc(self)
 end
+local thistxt = "Cleaner"
+--[[function mt.__tostring()
+    return thistxt
+end]]
 function mt:Destroy()
     self:Clean();
     setmetatable(self,nil);

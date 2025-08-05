@@ -4,8 +4,11 @@
     "$className": "DataModel",
     "ReplicatedStorage": {
       "$className": "ReplicatedStorage",
-      "CleanIt" : {
-        "$path": "CleanIt"
+      "CAM": {
+        "$className": "Folder",
+        "CleanIt" : {
+          "$path": "CleanIt"
+        }
       }
     }
     
