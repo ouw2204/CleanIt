@@ -4,7 +4,7 @@ local tcancel = task.cancel
 local tabletxt,destroytxt,Instancetxt,Threadtxt,RbxlScriptConnectionTxt,FunctionTxt,DeleteFunctionToCallTxt,CleanTxt = "table","Destroy","Instance","thread","RBXScriptConnection","function","DeleteFunctionToCall", "Clean"
 
 export type CleanerType = {
-    Holder: {};
+    --Holder: {};
     Add: (Entity: any,CleanFunctionName: string) -> ();
     Destroy: (self: CleanerType) -> ();
     Remove: (self: CleanerType, Entity: any) -> ();
@@ -26,7 +26,7 @@ local module = {
     end,
     new = function() : CleanerType
         local Cleaner = {
-            Holder = {};
+            --Holder = {};
         } :: CleanerType;
         setmetatable(Cleaner,mt);
         return Cleaner :: any
@@ -137,9 +137,9 @@ function mt:Clean()
     tc(self)
 end
 local thistxt = "Cleaner"
---[[function mt.__tostring()
+function mt.__tostring()
     return thistxt
-end]]
+end
 function mt:Destroy()
     self:Clean();
     setmetatable(self,nil);
