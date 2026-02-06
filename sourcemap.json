@@ -1,1 +1,1 @@
-{"name":"CleanIt","className":"DataModel","filePaths":["default.project.json"],"children":[{"name":"ReplicatedStorage","className":"ReplicatedStorage","children":[{"name":"CleanIt","className":"ModuleScript","filePaths":["CleanIt\\init.luau"]}]}]}
+{"name":"CleanIt","className":"DataModel","filePaths":["default.project.json"],"children":[{"name":"ReplicatedStorage","className":"ReplicatedStorage","children":[{"name":"CAM","className":"Folder","children":[{"name":"CleanIt","className":"ModuleScript","filePaths":["CleanIt\\init.luau"]}]}]}]}
