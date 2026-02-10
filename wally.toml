@@ -1,8 +1,8 @@
 [package]
 name = "mountaindouw/cleanit"
-version = "2.0.5"
+version = "2.0.6"
 registry = "https://github.com/UpliftGames/wally-index"
 realm = "shared"
 license = "MIT"
-description = "A memory cleaning helper."
+description = "A memory safety helper."
 authors = ["ProphetOuw <ouwproduction@gmail.com>"]
