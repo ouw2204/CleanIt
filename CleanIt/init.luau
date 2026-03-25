@@ -1,6 +1,8 @@
 --!strict
 local tins,tr,tc,tof,tf = table.insert,table.remove,table.clear,typeof,table.find
-local tcancel = task.cancel
+local tcancel,tspawn = task.cancel,task.spawn
+local corunning,coyield = coroutine.running,coroutine.yield
+local waitingThreads: {[any]: {thread}} = {}
 local tabletxt,destroytxt,Instancetxt,Threadtxt,RbxlScriptConnectionTxt,FunctionTxt,DeleteFunctionToCallTxt,CleanTxt = "table","Destroy","Instance","thread","RBXScriptConnection","function","DeleteFunctionToCall", "Clean"
 
 export type CleanerType = {
@@ -13,6 +15,7 @@ export type CleanerType = {
     DestroyAfter: (self: CleanerType, time: number) -> ();
     CleanAfter: (self: CleanerType, time: number) -> ();
     Exists: (self: CleanerType, Entity: any) -> boolean,
+    Wait: (self: CleanerType) -> (),
     Connect: (self: CleanerType, connection: RBXScriptSignal, func: (...any) -> any) -> ();
     CleanIndividual: (self: CleanerType, Entity: any,CustomCleanFunction: string?) -> ();
 }
@@ -129,12 +132,28 @@ end
 function mt:GetAll()
     return self;
 end
+function mt:Wait()
+    local threads = waitingThreads[self]
+    if threads == nil then
+        threads = {}
+        waitingThreads[self] = threads
+    end
+    tins(threads, corunning())
+    return coyield()
+end
 function mt:Clean()
     for _,v in (self) do
         local type = tof(v)
         CleanEntity(v,type);
     end
     tc(self)
+    local threads = waitingThreads[self]
+    if threads then
+        waitingThreads[self] = nil
+        for _,thread in threads do
+            tspawn(thread)
+        end
+    end
 end
 local thistxt = "Cleaner"
 function mt.__tostring()

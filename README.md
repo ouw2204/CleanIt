@@ -13,10 +13,10 @@ A LUAU memory cleaner, it's a simple package that helps you clean memory. As of 
 https://create.roblox.com/store/asset/87184763787563/CleanIt
 ### Wally
 ```
-CleanIt = "prophetouw/cleanit@2.0.6"
+CleanIt = "ouw2204/cleanit@2.0.7"
 ```
 ### Github
-To download this from the github, see the [releases](https://github.com/ProphetOuw/CleanIt/releases/tag/first) section and download the latest rbxm file.
+To download this from the github, see the [releases](https://github.com/ouw2204/CleanIt/releases/tag/first) section and download the latest rbxm file.
 ## Methods
 ### Timed cleaning
 ```lua
@@ -83,4 +83,11 @@ Cleans everything in the CleanIt cleaning list and itself.
 ```lua
 Cleaner:Add(object1)
 Cleaner:Destroy()
+```
+### Wait
+Cleans everything in the CleanIt cleaning list and itself.
+```lua
+-- do something before clean
+Cleaner:Wait()
+-- do something after clean
 ```
