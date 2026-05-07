@@ -13,7 +13,7 @@ A LUAU memory cleaner, it's a simple package that helps you clean memory. As of 
 https://create.roblox.com/store/asset/87184763787563/CleanIt
 ### Wally
 ```
-CleanIt = "ouw2204/cleanit@2.0.7"
+CleanIt = "ouw2204/cleanit@2.0.8"
 ```
 ### Github
 To download this from the github, see the [releases](https://github.com/ouw2204/CleanIt/releases/tag/first) section and download the latest rbxm file.
