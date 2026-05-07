@@ -7,7 +7,7 @@ local tabletxt,destroytxt,Instancetxt,Threadtxt,RbxlScriptConnectionTxt,Function
 
 export type CleanerType = {
     --Holder: {};
-    Add: (self: CleanerType,Entity: any,CleanFunctionName: string) -> ();
+    Add: (self: CleanerType,Entity: any,CleanFunctionName: string?) -> ();
     Destroy: (self: CleanerType) -> ();
     Remove: (self: CleanerType, Entity: any) -> ();
     Clean: (self: CleanerType) -> ();
