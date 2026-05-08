@@ -29,6 +29,13 @@ local Cleaner = CleanIt.new()
 Cleaner:Add(object1)
 Cleaner:Destroy()
 ```
+You can also directly assign entities as fields on the cleaner — they'll be picked up on `Clean`/`Destroy` just like items added through `:Add()`:
+```lua
+local Cleaner = CleanIt.new()
+Cleaner.SomethingToClean = workspace.Part
+Cleaner.MyConnection = workspace.ChildAdded:Connect(print)
+Cleaner:Destroy() -- destroys the Part and disconnects MyConnection
+```
 If you want custom cleaning logic you can use functions:
 ```lua
 local Object = workspace.Object
