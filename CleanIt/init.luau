@@ -7,17 +7,18 @@ local tabletxt,destroytxt,Instancetxt,Threadtxt,RbxlScriptConnectionTxt,Function
 
 export type CleanerType = {
     --Holder: {};
-    Add: (self: CleanerType,Entity: any,CleanFunctionName: string?) -> ();
+    Add: <T>(self: CleanerType, Entity: T, CleanFunctionName: string?) -> T;
     Destroy: (self: CleanerType) -> ();
-    Remove: (self: CleanerType, Entity: any) -> ();
+    Remove: (self: CleanerType, Entity: any) -> boolean?;
     Clean: (self: CleanerType) -> ();
     Extend: (self: CleanerType) -> CleanerType;
     DestroyAfter: (self: CleanerType, time: number) -> ();
     CleanAfter: (self: CleanerType, time: number) -> ();
-    Exists: (self: CleanerType, Entity: any) -> boolean,
-    Wait: (self: CleanerType) -> (),
+    Exists: (self: CleanerType, Entity: any) -> boolean;
+    Wait: (self: CleanerType) -> ...any;
     Connect: (self: CleanerType, connection: RBXScriptSignal, func: (...any) -> any) -> ();
-    CleanIndividual: (self: CleanerType, Entity: any,CustomCleanFunction: string?) -> ();
+    CleanIndividual: (self: CleanerType, Entity: any, CustomCleanFunction: string?) -> ();
+    GetAll: (self: CleanerType) -> CleanerType;
 }
 
 local mt = {}
@@ -35,9 +36,9 @@ local module = {
         return Cleaner :: any
     end
 }
-function mt:Connect(Connection: RBXScriptSignal, func: () -> ())
+function mt:Connect(Connection: RBXScriptSignal, func: (...any) -> any)
     if Connection ~= nil and func ~= nil then
-        tins(self,Connection:Connect(func))
+        tins(self :: any,Connection:Connect(func))
     end
 end
 function mt:CleanAfter(time: number)
@@ -61,12 +62,12 @@ function  mt:Extend()
     self:Add(Extended)
     return Extended
 end
-function mt:Add(Entity: any,CleanFunctionName: string)
-    if Entity == nil then return end;
+function mt:Add<T>(Entity: T, CleanFunctionName: string?): T
+    if Entity == nil then return Entity end;
     if CleanFunctionName ~= nil then
-        tins(self,{Entity = Entity,DeleteFunctionToCall = CleanFunctionName})
+        tins(self :: any,{Entity = Entity,DeleteFunctionToCall = CleanFunctionName})
     else
-        tins(self,Entity)
+        tins(self :: any,Entity)
     end;
     return Entity;
 end;
