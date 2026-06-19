@@ -1,8 +1,8 @@
 [package]
 name = "ouw2204/cleanit"
-version = "2.0.8"
+version = "2.0.9"
 registry = "https://github.com/UpliftGames/wally-index"
 realm = "shared"
 license = "MIT"
-description = "A memory safety helper."
+description = "Helps you organize and clean things you would otherwise forget about."
 authors = ["Ouw2204 <ouwproduction@gmail.com>"]
